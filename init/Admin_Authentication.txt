@@ -1,0 +1,72 @@
+1 - Go To config/auth.php : Make A new Guard (admin)
+    A)    'guards' => [
+                'admin' => [
+                    'driver' => 'session',
+                    'provider' => 'admins',
+                ],
+            ],
+
+    B)   'providers' => [
+                'admins' => [
+                    'driver' => 'eloquent',
+                    'model' => App\Models\Admin::class,
+                ],
+            ],
+
+
+2 - Make The Route Group For Admin :
+    
+    Route::group(['namespace' => 'Dashboard', 'middelware' => 'auth:admin'], function () {
+        
+    });
+
+
+3 - Edit Middelwares\Authenticate.php :
+
+    use Request;
+
+     protected function redirectTo($request)
+    {
+        if (! $request->expectsJson()) {
+            if(Request::is('admin/*')){
+                return route('admin.login');
+            }else{
+                return route('login');
+            }
+        }
+    }
+    
+
+4 - Edit Middelwares\RedirectIfAuthenticated.php :
+
+      public function handle($request, Closure $next, $guard = null)
+    {
+        if (Auth::guard($guard)->check()) {
+            if($guard == 'admin'){
+                return redirect(RouteServiceProvider::Admin);
+            }else{
+                return redirect(RouteServiceProvider::HOME);
+            }
+        }
+
+        return $next($request);
+    }
+
+    # Then Go To RouteServiceProvider.php To Add Admin Route =>     
+            public const Admin = '/admin';
+
+    # Then Go To routes/admin.php And add middleware to the index route =>  
+            Route::group(['middleware' => 'auth:admin'], function () {
+                Route::get('/', 'DashboardController@index')->name('admin.dashboard');
+            });
+
+
+
+5 - Admin Model Must be Authenticable => Go To The Models\Admin
+    use Illuminate\Foundation\Auth\User as Authenticatable;
+
+    class Admin extends Authenticatable
+    {
+        protected $table = 'admins';
+    }   
+

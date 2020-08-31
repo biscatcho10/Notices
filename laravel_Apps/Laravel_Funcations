@@ -1,0 +1,39 @@
+# all() : to retreive All Data Of The Model
+# get() : to retreive All Data Of The Model/$item
+# find(id) : find item with id
+#findOrFails(id) : find item with id or Go To Not Found Page
+# select('', '') : To select the cloumns will be retreived
+# where ('variable' , 'Opreator' , 'column_name')->first()
+# first() : retreive frist row of the result
+# orderBy('cloumn', 'desc/asc')
+# with() : to retreive the data of the $item and its All Relation's Data => 
+	ex : $item = Model::with('relation_name')->find[id] 
+=> $item = Model::with(['relation_name' => funcation ($q){
+	$q->select('', '');
+}]) : to retreive the data of the item and its specific Relation's Data not all Data
+
+# makeVisible(): make some hidden attribute Visible =>
+	ex : $item->makeVisible(['', '']) 
+# makeHidden(): $item->makeHidden(['', '']) : make some Visible attribute hidden.
+	ex : $item->makeHidden(['', ''])
+
+# whereHas : return user whose specific relation
+	ex : $user = User::whereHas('phone')->get();
+=> Model::whereHas('relation', funcation($q){
+		$q -> where('column' , '=' , 'value')
+	}) : return user whose specific relation with some condition.
+
+# whereDoesntHave() : return user Does'nt have specific relation
+	ex : $user = User::whereDoesntHave('phone')->get();
+=> Model::whereDoesntHave('relation', funcation($q){
+		$q -> where('column' , '=' , 'value')
+	}) : return user who Doesn't Have specific relation with some condition.
+
+# whereNull(column_name) : To return all rows Where Column_name = Null
+# whereNotNull(column_name) : To return all rows Where Column_name = value not null
+
+# app()->setLocale() : used to define the lang of the app
+# app()->getLocale() : used to get the lang of the app
+
+
+ 

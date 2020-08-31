@@ -1,0 +1,59 @@
+1 - Go To Routes : make =>(site.php - admin.php)
+    # Go To Providers/RouteServiceProvider.php To repaire Them :
+   A)  public function map()
+    {
+        $this->mapAdminRoutes();
+
+        $this->mapSiteRoutes();
+    }
+
+   B) protected function mapAdminRoutes()
+    {
+        Route::middleware('web')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/admin.php'));
+    }
+
+    protected function mapSiteRoutes()
+    {
+        Route::middleware('web')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/site.php'));
+    }
+
+2 - Go To Controllers : make => (Dashboard - Site)
+
+3 - Create App/Models : Then Move User.php in it.
+
+4 - Go To views : Then make (dashboard - site - layouts) 
+
+5 -  Install Translations Package  Go To  : 
+    A) https://github.com/Astrotomic/laravel-translatable
+       # composer require astrotomic/laravel-translatable
+
+    B) https://github.com/mcamara/laravel-localization : To switch Languages In The Site 
+       # composer require mcamara/laravel-localization 
+       # php artisan vendor:publish --provider="Mcamara\LaravelLocalization\LaravelLocalizationServiceProvider"
+       # Go To app/Http/Kernel.php Then Add :
+        protected $routeMiddleware = [
+        'localize'                => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRoutes::class,
+        'localizationRedirect'    => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
+        'localeSessionRedirect'   => \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
+        'localeCookieRedirect'    => \Mcamara\LaravelLocalization\Middleware\LocaleCookieRedirect::class,
+        'localeViewPath'          => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath::class
+        ];
+       # Then Repaire The Routes : 
+       Route::group([
+            'prefix' => LaravelLocalization::setLocale(),
+            'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ]
+        ], function(){
+            Routes..//
+        });
+
+        # to change Default Language : 
+            - go to config/app.php -->   'locale' => 'ar'
+            - config\laravellocalization.php -->        312) 'useAcceptLanguageHeader' => false,
+
+6 - Install Data-Tables package Go To : https://github.com/yajra/laravel-datatabl
+    # composer require yajra/laravel-datatables-oracle:"~9.0"
+    # php artisan vendor:publish --provider="Yajra\DataTables\DataTablesServiceProvider"

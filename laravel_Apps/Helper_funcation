@@ -1,0 +1,17 @@
+1 - create App\Helpers\general.php : And Write in it
+
+    function uploadImage($folder, $image){
+        $image->store('/', $folder);
+        $file_name = $image->hashName();
+        $path = 'images/'.$folder.'/'.$file_name;
+        return $path;
+    }
+
+2 - Go composer.json
+     "autoload": {
+        "files" :[
+            "App/Helpers/general.php"
+        ]
+    },
+
+3 - composer dump-autoload

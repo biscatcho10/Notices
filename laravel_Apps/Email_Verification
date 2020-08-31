@@ -1,0 +1,14 @@
+1- Go To .env
+	MAIL_USERNAME=40482135a32696
+	MAIL_PASSWORD=4deeb3163c402b
+	MAIL_FROM_ADDRESS=karimbiscatcho@gmail.com
+
+2-Go To User Model
+	make it implements from MustVerifyEmail :
+	class User extends Authenticatable implements MustVerifyEmail{}
+
+3-Go To web.php:
+	A) Auth::routes(['verify' => true]);
+
+	// apply verified middleware to the Route
+	B) Route::get('/home', 'HomeController@index')->name('home')->middleware('verified');

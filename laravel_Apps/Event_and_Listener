@@ -1,0 +1,76 @@
+1- make Event : 
+	php artisan make:event Event_name
+	php artisan make:event videoViewer
+
+2- make listener :
+	php artisan make:listener _ListenerName --event=Event_name
+ex:	php artisan make:listener IncrementCount --event=videoViewer
+
+4- to tie the table with Event :
+	in the Event _construct() make obj of table =>
+
+		 public $var ;
+		 public function __construct(Model_Name $item)
+		{
+			$this->var = $item;
+		}
+
+	ex: public $video;
+		public function __construct(Video $video)
+		{
+			$this->video = $video;
+		}
+
+
+3- to tie the listener with Event :
+	in the listener handle() make obj of event =>
+		public function handle(Event_name $event)
+		{
+			$this->fun_name($event->item)
+		}
+
+		public funcation fun_name($item){
+			//code..
+		}
+
+	ex: public function handle(videoViewer $event)
+		{
+			if(! session()->has('videoIsVisited')){	
+				$this->updateViwer($event->video);
+			}
+		}
+
+		public function updateViwer($video){
+			$video->viewers = $video->viewers + 1 ;
+			$video->save();
+			session()->put('videoIsVisited', $video->id)
+		}
+
+4- Go To App/Provider/EventServiceProvider 
+    protected $listen = [
+        Event_name::class => [
+            Listener_name::class,
+        ],
+    ];
+
+ex:protected $listen = [
+		videoViewer::class => [
+			IncrementCount::class,
+		],
+    ];
+
+5- To call This Event in the Fun() =>Go To the Controller
+
+	public funcation fun_name(){
+		$item = ;
+		event(new Event_name($item))
+	}
+
+ex: public function getVideo (){
+        $video = Video::first();
+        event(new videoViewer($video));
+        return view('video')->with('video',$video);
+     }
+
+6- Go to The .env :
+edit =>	BROADCAST_DRIVER=pusher

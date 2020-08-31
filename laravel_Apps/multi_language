@@ -1,0 +1,50 @@
+1- install mcamara package :make middleware on some routes will use this langs
+	composer require mcamara/laravel-localization
+
+2- edit the default configuration you may execute:
+	php artisan vendor:publish --provider="Mcamara\LaravelLocalization\LaravelLocalizationServiceProvider"
+
+3- Go To : config/laravellocalization.php => to define the languages
+
+4- Go To app/Http/Kernel.php : define the middlewares
+	protected $routeMiddleware = [
+        'localize'                => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRoutes::class,
+        'localizationRedirect'    => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRedirectFilter::class,
+        'localeSessionRedirect'   => \Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect::class,
+        'localeCookieRedirect'    => \Mcamara\LaravelLocalization\Middleware\LocaleCookieRedirect::class,
+        'localeViewPath'          => \Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath::class
+    ];
+
+5- Go to web.php : apply the middleware on the specific routes
+	Route::group(
+	[
+		'prefix' => LaravelLocalization::setLocale(),
+		'middleware' => [ 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ]
+	], function(){ 
+		//...Routes
+	});
+
+6- You must prepair the messages pages in the (lang) folder
+	and Call the messages in the validtion :
+		__('messages._Name') OR trans('messages._Name')
+
+7- if you will display it as item in nav bar :
+	 @foreach(LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
+		<li class="nav-item active">
+			<a class="nav-link" href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}">{{ $properties['native'] }}</a>
+		</li>
+	 @endforeach
+
+----------------------------------------------------------------------------------------------
+# if the database have multilanguage data 
+
+1- the form should have 2/more input for every item in the form :
+	ex : name_ar name_en 
+2- also create() And Validation must have 2/more for every one
+3- when you will reteive this data depend on the language
+	ex : $offers = Offer::select(
+            'id',
+			'price',
+            'name_'.LaravelLocalization::getCurrentLocale() . ' as name',
+            'details_'.LaravelLocalization::getCurrentLocale() . ' as details',
+         )->get();

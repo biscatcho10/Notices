@@ -1,0 +1,8 @@
+- git init 
+- git add .
+- git commit -m "first commit"
+- git remote add origin https://github.com/biscatcho10/store-ecommerce.git
+- git checkout -b begin : To Create Branch 'begin'
+- git branch : To Show All Branches 
+- git push -u origin begin : To Add The Data To The 'begin' Branch
+- git push -u origin master: To Add The Data To The 'Master'

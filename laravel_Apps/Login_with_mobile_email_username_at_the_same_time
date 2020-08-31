@@ -1,0 +1,24 @@
+1- Adjust Login Form and change (email, mobile) to identify
+	<div class="form-group row">
+		<label for="identify" class="col-md-4 col-form-label text-md-right">Email Or Mobile</label>
+
+		<div class="col-md-6">
+			<input id="identify" type="text" class="form-control @error('identify') is-invalid @enderror" name="identify" value="{{ old('identify') }}" required>
+
+			@error('identify')
+				<span class="invalid-feedback" role="alert">
+					<strong>{{ $message }}</strong>
+				</span>
+			@enderror
+		</div>
+	</div>
+
+2- Go To LoginController : override username() 
+	public function username()
+    {
+        $value = request()->input('identify'); // obtain the value of the identify field
+        $field = filter_var($value, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile'; // check if it is email or mobile
+        request()->merge([$field => $value]); // add the key and value in the request array ('email' => 'karimbiscatcho@gmail.com')
+        return $field ; // return the name of the field (mobile or email)
+
+    }

@@ -1,0 +1,38 @@
+1- Go To web.php :
+	
+    Route::get('edit/{offer_id}', 'OfferController@edit')->name('ajax.offer.edit');
+    Route::post('update', 'OfferController@update')->name('ajax.offer.update');
+
+2- Go To Controller :
+	 public function edit(Request  $request)
+    {
+         $offer = Offer::find($request ->offer_id );
+        if (!$offer)
+            return response()->json([
+                'status' => false,
+                'msg' => 'This Offer Not Exist',
+            ]);
+        return view('ajaxOffer.edit', compact('offer'));
+    }
+
+    public function update(Request $request){
+        $offer = Offer::find($request ->offer_id );
+        if (!$offer)
+        return response()->json([
+            'status' => false,
+            'msg' => 'This Offer Not Exist',
+        ]);
+
+        $offer->update($request->all());
+        return response()->json([
+            'status' => true,
+            'msg' => 'Offer Updated successfully',
+        ]);
+    }
+
+3- Go To View:
+	<form method="POST"  id="offerFormUpdate" action="" enctype="multipart/form-data">
+				<!--	Rest Of Inputs	-->
+		<input type="hidden" name="offer_id" value="{{ $offer->id}}">
+		<button id="update_offer" class="btn btn-primary float-right w-25">Update</button>
+	</form>

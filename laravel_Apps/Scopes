@@ -1,0 +1,51 @@
+# Local Scope 
+1- Go To the Model :
+	public function scopeInactive($q){
+     return $q->where('status' , '=', '0');
+    }
+
+2- Go To The Controller :
+	$offers = Offer::inactive()->get();
+
+* fun name => inactive()  so the Scope Name => scopeInactive($q)
+
+--------------------------------------------------------------------
+# Global Scope 
+1- create  App\Scopes\Name_Scope
+
+2- Go To The Name_Scope.php :
+
+	<?php
+
+	namespace App\Scopes;
+
+	use Illuminate\Database\Eloquent\Builder;
+	use Illuminate\Database\Eloquent\Model;
+	use Illuminate\Database\Eloquent\Scope;
+
+	class OfferScope implements Scope
+	{
+		public function apply(Builder $builder, Model $model)
+		{
+			$builder->where('status' , '=', '0');
+		}
+	}
+
+
+3- Go To the Model : 
+	 protected static function boot()
+   {
+       parent::boot();
+       static::addGlobalScope(new OfferScope);
+   }
+-----------------------------------------------------------------------
+# if t use Offer in any Controller The Global Scope Will be Applied 
+
+# if i dont need apply specific global scope in specific case :
+        $offers = Offer::withoutGlobalScope(OfferScope::class)->get();
+
+# if i dont need apply All global scopes in specific case :
+	   $offers = Offer::withoutGlobalScopes()->get();
+
+
+

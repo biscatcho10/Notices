@@ -1,0 +1,41 @@
+1- composer require laravel/socailite
+
+2-config/app.php
+	providers:        Laravel\Socialite\SocialiteServiceProvider::class,
+	 aliases:           'socailite' => \Laravel\Socialite\Facades\Socialite::class,
+3-.env
+	FB_CLIENT_ID =
+	FB_CLIENT_SECRET =
+	FB_REDIRECT ='http://localhost:8000/callback/facebook'
+
+4- config/services.php
+	'facebook'=> [
+   		 'client_id' => env('FB_CLIENT_ID'),
+   		 'client_secret' => env('FB_CLIENT_SECRET'),
+   		 'redirect' => env('FB_REDIRECT'),
+		],
+5- Add Button in the Form (Login with Facebook)
+		<a href=" {{ route('redirect', 'facebook') }} " class="btn btn-primary float-left">Login With Facebook</a>
+
+6- make the Route of the Button
+	Route::get('/redirect/{service}','SocialController@redirect')->name('redirect');
+	Route::get('/callback/{service}','SocialController@callback')->name('callback');
+
+7- make The Controller (SocailController)
+	class SocialController extends Controller
+	{
+		// redirect to the facebook page (continue as karim)
+		public function redirect($service){
+			try {
+					return Socialite::driver($service)->redirect();
+				} catch (\Exception $e) {
+					return redirect()->to('login');
+				}
+		}	
+
+		// return the data of the user as a json
+		public function callback($service){
+			$user = Socialite::with($service)->stateless()->user();
+			return response()->json($user);
+		}
+	}

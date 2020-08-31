@@ -1,0 +1,92 @@
+# Save Data In the DB With Ajax =>
+
+- Go The Creat view Page : 
+A)  <form method="POST" action="" enctype="multipart/form-data">
+	</form>
+
+B) call The Jquery
+
+C) Delete type submit From the button of the From
+
+C)  $(document).on('click', '#save_offer', function(e){
+            e.preventDefault(); 
+            $.ajax({
+                type: 'post',
+                enctype: 'multipart/form-data',
+                url: "{{route('ajax.Offer.store')}}",
+                data: {
+                    '_token':"{{csrf_token()}}",
+                    'name_ar': $("input[name='name_ar']").val(),
+                    'name_en': $("input[name='name_en']").val(),
+                    'price': $("input[name='price']").val(),
+                    'details_ar': $("textarea[name='details_ar']").val(),
+                    'details_en': $("textarea[name='details_en']").val()
+                },
+                success: function(data){},
+                error: function(reject){},
+            });
+        });
+
+-------------------------------------------------------------------------------
+# Second Way With Saving images 
+1- add image to create() in controller
+
+2- add id for the form ==> id="offerForm"
+
+3- $(document).on('click', '#save_offer', function(e){
+            e.preventDefault();
+
+            var formData = new FormData($('#offerForm')[0]);
+
+            $.ajax({
+                type: 'post',
+                enctype: 'multipart/form-data',
+                url: "{{route('ajax.Offer.store')}}",
+                data: formData,
+                processData : false,
+                contentType : false,
+                cache : false,
+                success: function(data){},
+                error: function(reject){},
+            });
+        });
+
+------------------------------------------------------------------------------------
+#Return Message As Alert :
+1- Go to Controller :
+	after create => 
+	 if($offer){
+            return response()->json([
+                'status' => true,
+                'msg' => 'Offer Saved successfully',
+            ]);
+        }else{
+            return response()->json([
+                'status' => false,
+                'msg' => 'Offer Does Not Saved, Try Again',
+            ]);
+        }
+
+
+2- Go To View : 
+	 $(document).on('click', '#save_offer', function(e){
+            e.preventDefault();
+
+            var formData = new FormData($('#offerForm')[0]);
+
+            $.ajax({
+                type: 'post',
+                enctype: 'multipart/form-data',
+                url: "{{route('ajax.Offer.store')}}",
+                data: formData,
+                processData : false,
+                contentType : false,
+                cache : false,
+                success: function(data){
+                    if(data.status === true){
+                        $('#success_msg').show();
+                    }
+                },
+                error: function(reject){},
+            });
+        });

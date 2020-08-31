@@ -1,0 +1,49 @@
+1- make Commend => (App/console/commands)
+	php artisan make:command notify
+
+3- go krenal.php to define the command and  :
+	A) call the url of the command in the kernal
+		protected $commands = [
+			\App\Console\Commands\notify::class,
+		];
+
+	B) define the time of expire :
+		 protected function schedule(Schedule $schedule)
+		{
+			$schedule->command('notify:email')->daily();
+<!--        	$schedule->command('notify:email')->everyMinute();-->
+
+		}
+4- make mail :
+	php artisan make:mail NotifyEmail
+
+5- go expiration
+	   A) protected $signature = 'notify:email';
+	   B) protected $description = 'Send Email Notify For All users Every Day automatically';
+
+	   c)	 public function handle()
+			{
+				  //to get All user's Emails in Array
+				  $emails = User::pluck('email')->toArray();
+
+				  //some Data will be passed by notifyEmail	
+				  $data=['title'=> 'progrmming' , 'body' => 'php'];
+				  foreach($emails as $email){
+					   Mail::To($email) ->send(new NotifyEmail($data));
+				  }
+			}
+
+6- Go To NotifyEmail : to pass the data (must througth NotifyEmail)
+	A) public $details;
+	B) public function __construct($data)
+		{
+			$this->details = $data;
+		}
+	C) public function build()
+		{
+			return $this->view('emails.mailuser');
+		}
+
+7- Go To the View Will Display (Email Body) => emails.mailuser
+{{ details['title'] }}
+{{ details['body'] }}

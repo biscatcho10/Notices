@@ -1,0 +1,68 @@
+# frist way :
+1- add to form => enctype="multipart/form-data"
+
+2- Go To Controller  :
+	public funcation create(){
+		//store in the public
+		 $file_ex = $request->image->getClientOriginalExtension();
+         $file_name = time().'.'.$file_ex;
+         $path = 'images/offers';
+         $request->image->move($path,$file_name);
+
+		//store in Database
+        Offer::create([
+            'image' => $file_name,
+        ]);
+	}
+--------------------------------------------------------------------------------------------
+#Second Way:
+
+1- Go To Controller  :
+	public funcation create(){
+		
+		$file_name = $this->saveImage($request->image , 'images/offers');
+		//store in Database
+        Offer::create([
+            'image' => $file_name,
+        ]);
+	}
+
+	 protected function saveImage($image, $folder){
+        $file_ex = $image->getClientOriginalExtension();
+        $file_name = time().'.'.$file_ex;
+        $path = $folder;
+        $image->move($path,$file_name);
+
+        return $file_name;
+     }
+
+# We Can Put The protected function saveImage() in the Trait and the Call the traitin the Controller
+
+------------------------------------------------------------------------------------------------
+# Third Way :
+1-Go To Controller :
+	public function store(PostRequest $request)
+    {
+
+        // dd($request->image->store('images' , 'public'));
+
+        $post = Post::create([
+            'image' => $request->image->store('images' , 'public'),
+        ]);
+
+        session()->flash('success' , 'The Post Created Successfully ');
+        return redirect()->route('posts.index');
+    }
+
+2- php artisan storage:link
+
+-------------------------------------------------------------------------------
+
+# helper Funcation 
+
+function UploadImage($folder, $image){
+    $image->store('/', $folder);
+    $file_name = $image->hashName();
+    $path = 'images/'.$folder.'/'.$file_name;
+    return $path;
+}

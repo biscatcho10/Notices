@@ -1,0 +1,20 @@
+1- Go To the View : 
+	A) under Each input => <small id="INPUT_NAME_error" class="form-text text-danger"></small>
+
+
+	B)  
+		error: function (reject) {
+			if( reject.status === 422 ) {
+				var response = $.parseJSON(reject.responseText);
+				$.each(response.errors, function (key, val) {
+					$("#" + key + "_error").text(val[0]);
+				});
+			}
+		}
+	c) make reset ot the Erorr messages : when reinput the right value ->the error msg will be hidden
+		 	$('#name_ar_error').text('');
+            $('#name_en_error').text('');
+            $('#price_error').text('');
+            $('#details_ar_error').text('');
+            $('#details_en_error').text('');
+            $('#image_error').text('');
